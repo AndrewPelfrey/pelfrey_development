@@ -1,0 +1,14 @@
+.footer {
+  border-top: 1px solid rgba(0,0,0,.08);
+}
+
+.inner {
+  height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.muted {
+  font-size: .9rem;
+  opacity: .7;
+}

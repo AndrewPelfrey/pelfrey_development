@@ -1,0 +1,40 @@
+.header {
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+.nav {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+
+.links {
+  display: flex;
+  gap: .5rem;
+}
+
+.link {
+  padding: .5rem .75rem;
+  border-radius: .5rem;
+  text-decoration: none;
+  color: inherit;
+  opacity: .85;
+}
+
+.link:hover {
+  opacity: 1;
+}
+
+.active {
+  /* text-decoration: underline; */
+  font-weight: 600;
+}
+
+.link.active{ color:var(--brand); }
