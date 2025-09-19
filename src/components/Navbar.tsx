@@ -1,8 +1,15 @@
 // src/components/Navbar.tsx
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import logo from "../assets/pelfreyweb.png";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const loc = useLocation();
+
+  // close the mobile menu whenever the route changes
+  useEffect(() => setOpen(false), [loc.pathname]);
+
   return (
     <header className="header">
       <nav className="nav">
@@ -13,7 +20,7 @@ export default function Navbar() {
           </NavLink>
         </div>
 
-        {/* Links on the same row */}
+        {/* Desktop links */}
         <div className="nav-links">
           <NavLink to="/services" className="link">Services</NavLink>
           <NavLink to="/process" className="link">Process</NavLink>
@@ -23,12 +30,30 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Hamburger */}
-        <button className="hamburger">
+        <button
+          className="hamburger"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          onClick={() => setOpen(v => !v)}
+          type="button"
+        >
           <span className="hamburger-box">
-            <span className="hamburger-inner"></span>
+            <span className={`hamburger-inner${open ? " is-open" : ""}`} />
           </span>
         </button>
       </nav>
+
+      {/* Mobile panel (hidden on desktop by your CSS) */}
+      <div id="mobile-menu" className={`mobile-panel ${open ? "open" : ""}`}>
+        <ul className="mobile-links">
+          <li><NavLink to="/services" className="m-link">Services</NavLink></li>
+          <li><NavLink to="/process"  className="m-link">Process</NavLink></li>
+          <li><NavLink to="/work"     className="m-link">Work</NavLink></li>
+          <li><NavLink to="/about"    className="m-link">About</NavLink></li>
+          <li><NavLink to="/contact"  className="m-link">Contact</NavLink></li>
+        </ul>
+      </div>
     </header>
   );
 }
