@@ -762,3 +762,22 @@ body { padding-top: var(--header-h); } /* keep content from sliding under header
 
 /* Push page content down so it doesn't sit under the fixed header */
 body { padding-top: var(--header-h); }
+
+.image-break {
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.break-img {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 8px 22px rgba(0,0,0,.25);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.break-img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 28px rgba(0,0,0,.3);
+}

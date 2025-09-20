@@ -11,6 +11,8 @@ import {
   FinalCTA,
 } from "../components/index.tsx";
 import landscape from "../assets/landscape.gif";
+import laptopDesk from "../assets/webdesign.png";
+
 
 export default function Home() {
   useTitle("Home");
@@ -139,6 +141,11 @@ export default function Home() {
 
       {/* JOURNEY */}
       <CredBar />
+            <section className="image-break">
+  <div className="container">
+    <img src={laptopDesk} alt="Laptop on a desk with code and charts" className="break-img" />
+  </div>
+</section>
       <ServicesPreview />
       <ProcessSnapshot />
       <FeaturedProject />
