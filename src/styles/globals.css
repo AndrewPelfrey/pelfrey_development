@@ -781,3 +781,23 @@ body { padding-top: var(--header-h); }
   transform: scale(1.02);
   box-shadow: 0 12px 28px rgba(0,0,0,.3);
 }
+.services-accent {
+  display: block;
+  width: 100%;           /* ✅ stretch across container */
+  max-width: 1100px;     /* cap width so it doesn’t go too huge on big monitors */
+  height: auto;          /* maintain proportions */
+  aspect-ratio: 5 / 1;   /* ✅ force it to be wide and not too tall */
+  object-fit: cover;
+  margin: 1.5rem auto 1rem;
+  opacity: .9;
+  filter: drop-shadow(0 8px 30px rgba(18,184,134,.25));
+  border-radius: 12px;
+}
+
+@media (max-width: 600px) {
+  .services-accent {
+    aspect-ratio: 6 / 2;  /* slightly taller on mobile so it’s visible */
+    margin: 1rem auto .5rem;
+    opacity: .95;
+  }
+}
