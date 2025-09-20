@@ -12,7 +12,8 @@ import {
 } from "../components/index.tsx";
 import landscape from "../assets/landscape.gif";
 import laptopDesk from "../assets/webdesign.png";
-import accent from "../assets/accent.png"
+import accent from "../assets/accent.png";
+import wire from "../assets/wire.png";
 
 
 export default function Home() {
@@ -148,13 +149,20 @@ export default function Home() {
   </div>
 </section>
       <ServicesPreview />
-      <img
+    <section className="container wireframe-showcase">
+        <img 
+          src={wire} 
+          alt="Wireframe laptop and phone illustration" 
+          className="wireframe-img"
+        />
+      </section>
+      <ProcessSnapshot />
+          <img
   src={accent}
   alt=""
   className="services-accent"
   aria-hidden="true"
 />
-      <ProcessSnapshot />
       <FeaturedProject />
       <Testimonials />
       <FAQ />

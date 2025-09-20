@@ -801,3 +801,15 @@ body { padding-top: var(--header-h); }
     opacity: .95;
   }
 }
+.wireframe-showcase {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.wireframe-img {
+  max-width: 500px;   /* adjust size */
+  width: 100%;
+  height: auto;
+  opacity: 0.9;       /* so it blends better */
+}
