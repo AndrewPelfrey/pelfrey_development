@@ -14,6 +14,7 @@ import landscape from "../assets/landscape.gif";
 import laptopDesk from "../assets/webdesign.png";
 import accent from "../assets/accent.png";
 import wire from "../assets/wire.png";
+import process from "../assets/process.png";
 
 
 export default function Home() {
@@ -157,12 +158,14 @@ export default function Home() {
         />
       </section>
       <ProcessSnapshot />
-          <img
-  src={accent}
-  alt=""
-  className="services-accent"
-  aria-hidden="true"
-/>
+     <div className="container" style={{marginTop: '2rem'}}>
+  <img
+    src={process}
+    alt="Pelfrey process: Discover, Design, Develop, Deploy"
+    className="process-hero-img"
+  />
+</div>
+
       <FeaturedProject />
       <Testimonials />
       <FAQ />

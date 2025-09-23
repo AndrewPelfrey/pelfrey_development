@@ -813,3 +813,13 @@ body { padding-top: var(--header-h); }
   height: auto;
   opacity: 0.9;       /* so it blends better */
 }
+.process-hero-img{
+  display:block;
+  margin: 0 auto 1.25rem;
+  max-width: 920px;     /* nice width on desktop */
+  width: 92%;
+  opacity: .9;          /* sits softly with your theme */
+}
+@media (max-width: 900px){
+  .process-hero-img{ width: 100%; max-width: 720px; opacity: .95; }
+}
