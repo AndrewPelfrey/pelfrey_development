@@ -25,17 +25,18 @@ export default function Testimonials() {
       <div className="container">
         <h2 className="h2">What clients say</h2>
 
-        <div className="testi-grid testi-wrap">
-          {testimonials.map((t, i) => (
-            <blockquote key={i} className="card pad testi-card" style={{ ["--i" as any]: i }}>
-              <div className="quote" aria-hidden="true">“</div>
-              <p className="p" style={{ margin: 0 }}>{t.text}</p>
-              <footer style={{ marginTop: ".5rem", opacity: .85 }}>
-                — {t.author}{t.role ? `, ${t.role}` : ""}
-              </footer>
-              <span className="sweep" aria-hidden="true" />
-            </blockquote>
-          ))}
+        {/* stage adds glow background; aria-hidden so it’s decorative */}
+        <div className="testi-stage">
+          <div className="testi-backdrop" aria-hidden="true" />
+
+          <div className="testi-grid testi-wrap in">
+            {testimonials.map((t, i) => (
+              <blockquote key={i} className="testi-card" style={{ ["--i" as any]: i }}>
+                <p className="testi-text">“{t.text}”</p>
+                <footer className="testi-footer">— {t.author}{t.role ? `, ${t.role}` : ""}</footer>
+              </blockquote>
+            ))}
+          </div>
         </div>
       </div>
     </section>
