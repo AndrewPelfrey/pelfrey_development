@@ -19,7 +19,6 @@ import process from "../assets/process.png";
 
 export default function Home() {
   useTitle("Home");
-
   useEffect(() => {
     // Observe sections and add 'in' on scroll
     const selectors = [
@@ -31,6 +30,7 @@ export default function Home() {
       ".testi-wrap",
       ".faq-wrap",
       ".final-cta",
+      ".wireframe-showcase",
     ];
     const els = selectors.flatMap((sel) => Array.from(document.querySelectorAll<HTMLElement>(sel)));
     const io = new IntersectionObserver(
@@ -39,17 +39,32 @@ export default function Home() {
     );
     els.forEach((el) => io.observe(el));
 
-    // scroll progress
+    // Elements we’ll reference for scroll effects
     const bar = document.getElementById("scroll-progress");
+    const hero = document.querySelector<HTMLElement>(".home-hero");
+
+    // scroll progress + hero parallax
     const onScroll = () => {
       const h = document.documentElement;
+
+      // existing progress bar
       const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
       if (bar) bar.style.setProperty("--progress", `${scrolled}%`);
+
+      // NEW: hero local progress 0..1 while the page scroll is within the hero
+      if (hero) {
+        const y = window.scrollY - hero.offsetTop;          // how far into the hero we are
+        const height = hero.offsetHeight || 1;
+        const p = Math.min(Math.max(y / height, 0), 1);     // clamp to [0,1]
+        hero.style.setProperty("--p", p.toFixed(4));
+      }
     };
+
+    // run once, then listen
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    // hero parallax shimmer (mouse)
+    // hero parallax shimmer (mouse) - keep your existing code
     const onMouse = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -64,6 +79,7 @@ export default function Home() {
       window.removeEventListener("mousemove", onMouse);
     };
   }, []);
+
 
   const words = [
     "Stop",
@@ -143,21 +159,33 @@ export default function Home() {
       </section>
 
       {/* JOURNEY */}
-      <CredBar />
+      <section className="vibe-section">
+  <div className="vibe-backdrop" aria-hidden="true" />
+  <CredBar />
+</section>
             <section className="image-break">
   <div className="container">
     <img src={laptopDesk} alt="Laptop on a desk with code and charts" className="break-img" />
   </div>
 </section>
-      <ServicesPreview />
+      <section className="vibe-section">
+  <div className="vibe-backdrop" aria-hidden="true" />
+  <ServicesPreview />
+</section>
     <section className="container wireframe-showcase">
-        <img 
-          src={wire} 
-          alt="Wireframe laptop and phone illustration" 
-          className="wireframe-img"
-        />
-      </section>
-      <ProcessSnapshot />
+  <div className="wireframe-rotor">
+    <img 
+      src={wire} 
+      alt="Wireframe laptop and phone illustration" 
+      className="wireframe-img"
+    />
+  </div>
+</section>
+
+      <section className="vibe-section">
+  <div className="vibe-backdrop" aria-hidden="true" />
+  <ProcessSnapshot />
+</section>
      <div className="container" style={{marginTop: '2rem'}}>
   <img
     src={process}
@@ -166,7 +194,10 @@ export default function Home() {
   />
 </div>
 
-      <FeaturedProject />
+<section className="vibe-section">
+  <div className="vibe-backdrop" aria-hidden="true" />
+  <FeaturedProject />
+</section>
       <Testimonials />
       <FAQ />
       <FinalCTA />

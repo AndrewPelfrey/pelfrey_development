@@ -11,15 +11,17 @@ const faqs: QA[] = [
 export default function FAQ() {
   const ref = useReveal<HTMLDivElement>();
 
-  return (
-    <section className="section">
+    return (
+    <section className="faq-wrap in vibe-section section">
+      <div className="vibe-backdrop" aria-hidden="true" />
+
       <div className="container">
-        <h2 className="h2">FAQ</h2>
-        <div ref={ref} className="faq-wrap">
-          {faqs.map((f) => (
-            <details key={f.q} className="card pad faq-item">
+        <h2 className="h2">FAQs</h2>
+        <div className="faq-list">
+          {faqs.map((f, i) => (
+            <details key={i} className="faq-item vibe-card">
               <summary>{f.q}</summary>
-              <p className="p" style={{ margin: ".5rem 0 0" }}>{f.a}</p>
+              <div className="faq-content">{f.a}</div>
             </details>
           ))}
         </div>

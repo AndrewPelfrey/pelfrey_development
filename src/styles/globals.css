@@ -224,6 +224,73 @@ body { padding-top: var(--header-h); }
 .sheen:hover::after { transform: translateX(100%); }
 
 /* =========================
+   HERO — parallax + CTA pop + per-word sheen
+   ========================= */
+
+/* a progress variable the JS will drive from 0 → 1 while you scroll past the hero */
+.home-hero { --p: 0; }
+
+/* Parallax layers (tiny, tasteful) */
+.home-hero .hero-inner { 
+  transform: translateY(calc(var(--p) * -14px));
+  will-change: transform;
+}
+.home-hero .hero-overlay {
+  opacity: calc(.65 + var(--p) * .15); /* darken slightly as you scroll */
+}
+.home-hero .b1 {
+  transform: translateY(calc(var(--p) * 20px)) scale(calc(1 + var(--p) * .02));
+  will-change: transform;
+}
+.home-hero .b2 {
+  transform: translateY(calc(var(--p) * 28px)) scale(calc(1 + var(--p) * .03));
+  will-change: transform;
+}
+.home-hero .rotating-badge {
+  transform: translateY(calc(var(--p) * -8px));
+  will-change: transform;
+}
+
+/* CTA: pop in after the headline animates */
+.hero-cta {
+  opacity: 0; transform: translateY(14px) scale(.98);
+}
+.home-hero.in .hero-cta { animation: hero-cta-pop .6s cubic-bezier(.2,.9,.2,1) .25s forwards; }
+@keyframes hero-cta-pop {
+  0%   { opacity: 0; transform: translateY(14px) scale(.98); }
+  60%  { opacity: 1; transform: translateY(-3px) scale(1.015); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Per-word sheen: a soft highlight sweeps across each word (staggered) */
+.home-hero .chunk { position: relative; }
+.home-hero.in .chunk::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg,
+              rgba(255,255,255,0) 40%,
+              rgba(255,255,255,.55) 50%,
+              rgba(255,255,255,0) 60%);
+  transform: translateX(-120%);
+  animation: hero-word-sheen 4.2s ease-in-out infinite;
+  animation-delay: calc(.8s + var(--i, 0) * .12s);
+  mix-blend-mode: screen;       /* keeps it subtle on the photo */
+  pointer-events: none;
+}
+@keyframes hero-word-sheen { to { transform: translateX(120%); } }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero .hero-inner,
+  .home-hero .b1,
+  .home-hero .b2,
+  .home-hero .rotating-badge { transform: none !important; }
+  .hero-cta { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .home-hero .chunk::after { animation: none !important; opacity: 0 !important; }
+}
+
+
+/* =========================
    5) Component motion roots
    ========================= */
 .in-once, .credbar, .svc-wrap, .process-grid, .feat-card, .testi-wrap, .faq-wrap, .final-cta {
@@ -234,31 +301,152 @@ body { padding-top: var(--header-h); }
 }
 
 /* =========================
-   6) CredBar
+   CredBar (plain-language)
    ========================= */
 .credbar { perspective: 1000px; }
+
+/* Card entrance + hover */
 .cred-item {
-  transform: translateY(16px) scale(.98); opacity: 0;
+  transform: translateY(16px) scale(.98);
+  opacity: 0;
   animation: cred-in .6s ease forwards;
-  will-change: transform, opacity; transition: transform .3s ease, box-shadow .3s ease;
+  will-change: transform, opacity;
+  transition: transform .3s ease, box-shadow .3s ease;
 }
-.cred-item:hover { transform: translateY(-4px) rotateX(4deg) rotateY(2deg); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
-.cred-icon { font-size: 1.5rem; display: block; margin-bottom: .25rem; animation: float 3s ease-in-out infinite; }
-.cred-text { display: block; font-weight: 500; font-size: .95rem; }
-@keyframes cred-in { from { opacity: 0; transform: translateY(24px) scale(.95);} to { opacity: 1; transform: translateY(0) scale(1);} }
-@keyframes float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-4px);} }
+.cred-item:hover {
+  transform: translateY(-4px) rotateX(3deg) rotateY(1.5deg);
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+/* Icon + text */
+.cred-icon {
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: .25rem;
+  animation: float 3s ease-in-out infinite;
+}
+.cred-title {
+  display: block;
+  font-weight: 600;
+  font-size: .98rem;
+}
+.cred-help {
+  display: block;
+  margin-top: .2rem;
+  font-size: .88rem;
+  color: var(--muted, #9aa3b2);
+  line-height: 1.35;
+}
+
+/* Animations */
+@keyframes cred-in {
+  from { opacity: 0; transform: translateY(24px) scale(.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-4px); }
+}
+
+/* Accessibility: respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cred-item { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .cred-icon { animation: none !important; }
+}
 
 /* =========================
-   7) ServicesPreview
+   ServicesPreview (friendly + motion)
    ========================= */
-.svc-wrap { position: relative; }
-.svc-card {
-  transform: rotateX(10deg) translateY(10px); transform-origin: 50% 100%;
-  opacity: 0; animation: svc-in .7s ease forwards; animation-delay: calc(var(--i, 0) * .1s);
-  transition: transform .25s ease, box-shadow .25s ease;
+.svc-wrap { position: relative; gap: clamp(1rem, 2.5vw, 1.25rem); }
+
+/* Enter animation: slight rise + fade with stagger */
+.pop-in {
+  opacity: 0;
+  transform: translateY(14px) scale(.98) rotateX(4deg);
+  animation: svc-in .7s ease forwards;
+  animation-delay: calc(var(--i, 0) * .09s);
+  will-change: transform, opacity;
 }
-.svc-card:hover { transform: translateY(-3px) rotateX(0); box-shadow: 0 8px 24px rgba(0,0,0,.18);}
-@keyframes svc-in { to { opacity: 1; transform: none; } }
+@keyframes svc-in {
+  to { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+}
+
+/* Card hover: soft lift + parallax tilt + glow border */
+.svc-card {
+  position: relative;
+  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  border-radius: var(--radius, 14px);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  backdrop-filter: saturate(140%) blur(8px);
+  box-shadow: 0 8px 26px rgba(0,0,0,.18);
+}
+.svc-card::after {
+  /* edge light sweep */
+  content:"";
+  position: absolute; inset: -1px;
+  background: linear-gradient(120deg, transparent, rgba(0,229,255,.18), rgba(138,43,226,.18), transparent);
+  opacity: .0; pointer-events: none;
+  transition: opacity .35s ease;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  padding: 1px; border-radius: inherit;
+}
+.svc-card:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-1.5deg);
+  box-shadow: 0 14px 36px rgba(0,0,0,.28), 0 24px 64px rgba(138,43,226,.14);
+  border-color: rgba(255,255,255,.12);
+}
+.svc-card:hover::after { opacity: .7; }
+
+/* Icon with gentle float */
+.svc-icon {
+  font-size: 1.6rem;
+  margin-bottom: .35rem;
+  animation: float 3.2s ease-in-out infinite;
+}
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* Titles + text */
+.svc-title { margin: 0 0 .25rem; font-weight: 700; letter-spacing: .2px; }
+.svc-text { margin: 0; line-height: 1.5; }
+.svc-text + .svc-text { margin-top: .35rem; }
+.svc-text.muted { color: var(--muted, #9aa3b2); }
+
+/* CTA: glossy ghost button with moving arrow + light sheen */
+.svc-cta { margin-top: .8rem; }
+.btn.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn.sheen::after {
+  content:"";
+  position: absolute; top: 0; bottom: 0; width: 60px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: translateX(-120%);
+  animation: sheen-move 3.4s linear infinite;
+  pointer-events: none;
+}
+@keyframes sheen-move {
+  0%, 70% { transform: translateX(-130%); }
+  100%    { transform: translateX(160%); }
+}
+.arrow-move { padding-right: 1.75rem; }
+.arrow-move::after {
+  content: "→";
+  display: inline-block;
+  margin-left: .5rem;
+  transition: transform .25s ease;
+}
+.arrow-move:hover::after { transform: translateX(3px); }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pop-in, .svc-icon, .btn.sheen::after { animation: none !important; }
+  .svc-card, .arrow-move::after { transition: none !important; }
+}
 
 /* =========================
    8) ProcessSnapshot
@@ -302,13 +490,13 @@ body { padding-top: var(--header-h); }
 /* =========================
    10) FAQ
    ========================= */
-.faq-wrap .faq-item { opacity: 0; transform: translateY(12px); animation: faq-in .6s ease forwards; }
+/* .faq-wrap .faq-item { opacity: 0; transform: translateY(12px); animation: faq-in .6s ease forwards; }
 .faq-wrap .faq-item:nth-child(1){ animation-delay: .04s; }
 .faq-wrap .faq-item:nth-child(2){ animation-delay: .12s; }
 .faq-wrap .faq-item:nth-child(3){ animation-delay: .20s; }
 @keyframes faq-in { to { opacity: 1; transform: none; } }
 .faq-item summary { cursor: pointer; font-weight: 700; list-style: none; }
-.faq-item[open] { box-shadow: 0 8px 22px rgba(0,0,0,.18); }
+.faq-item[open] { box-shadow: 0 8px 22px rgba(0,0,0,.18); } */
 
 /* =========================
    11) Final CTA
@@ -739,4 +927,580 @@ body { padding-top: var(--header-h); }
   .testi-backdrop { animation: none !important; }
   .testi-card { animation: testi-pop .01s linear forwards !important; }
   .testi-card::before { animation: none !important; }
+}
+/* Wireframe Showcase — fade/scale in + constant slow rotation */
+.wireframe-showcase {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Wrapper adds rotation */
+.wireframe-rotor {
+  display: inline-block;
+  will-change: transform;
+  animation: wire-rotate 25s linear infinite; /* slow, smooth rotation */
+  transform-origin: 50% 50%;
+  position: relative;
+}
+
+/* Image itself */
+.wireframe-img {
+  display: block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Glowing aura */
+.wireframe-rotor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center,
+    rgba(18,184,134,.6),   /* strong accent green */
+    rgba(18,184,134,.2) 50%,
+    transparent 80%);
+  filter: blur(50px);
+  z-index: 0;
+  animation: glow-pulse 5s ease-in-out infinite alternate;
+}
+
+/* Glow gently breathing */
+@keyframes glow-pulse {
+  from { opacity: 0.35; transform: scale(1); }
+  to   { opacity: 0.65; transform: scale(1.08); }
+}
+
+/* Rotation */
+@keyframes wire-rotate {
+  to { transform: rotate(1turn); }
+}
+
+
+@keyframes wire-rotate {
+  to { transform: rotate(1turn); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .wireframe-rotor { animation: none !important; }
+  .wireframe-img { transition: none !important; opacity: 1 !important; transform: none !important; }
+}
+/* =========================
+   Final CTA — glowing section + floating shapes + animated button
+   ========================= */
+
+/* wrapper upgrade (keeps your existing .final-cta behavior intact) */
+.final-cta.cta-enhanced {
+  position: relative;
+  isolation: isolate;        /* keep glows inside */
+  overflow: hidden;          /* hide glow edges */
+}
+
+/* animated gradient glow backdrop */
+.final-cta.cta-enhanced .cta-backdrop {
+  position: absolute; inset: -80px -40px;
+  z-index: -1; pointer-events: none;
+  filter: blur(32px) saturate(115%);
+  opacity: 0.8;
+  background:
+    radial-gradient(700px 220px at 15% 110%, rgba(18,184,134,.35), transparent 70%),
+    radial-gradient(700px 220px at 85% -10%, rgba(108,92,231,.28), transparent 70%),
+    radial-gradient(420px 180px at 50% 40%, rgba(18,184,134,.18), transparent 70%);
+  animation: cta-pan 24s ease-in-out infinite alternate;
+}
+@keyframes cta-pan {
+  0%   { transform: translate3d(-10px, 0, 0) scale(1); }
+  100% { transform: translate3d(10px, -6px, 0) scale(1.03); }
+}
+
+/* floating accent shapes (no border, just green glow hints) */
+.final-cta.cta-enhanced::before,
+.final-cta.cta-enhanced::after {
+  content: "";
+  position: absolute; inset: auto;
+  width: 280px; height: 280px; border-radius: 50%;
+  filter: blur(40px);
+  opacity: .18; pointer-events: none; z-index: -1;
+}
+.final-cta.cta-enhanced::before {
+  left: -60px; bottom: -60px;
+  background: radial-gradient(circle at 35% 35%, rgba(18,184,134,.9), rgba(18,184,134,0));
+  animation: float-a 18s ease-in-out infinite alternate;
+}
+.final-cta.cta-enhanced::after {
+  right: -60px; top: -60px;
+  background: radial-gradient(circle at 65% 65%, rgba(108,92,231,.75), rgba(108,92,231,0));
+  animation: float-b 22s ease-in-out infinite alternate;
+}
+@keyframes float-a { 0% { transform: translate(0,0) } 100% { transform: translate(24px,-18px) } }
+@keyframes float-b { 0% { transform: translate(0,0) } 100% { transform: translate(-20px,16px) } }
+
+/* CTA buttons — pulsing glow + looping sheen */
+.btn.primary.cta-boost {
+  position: relative;
+  box-shadow: 0 0 0 rgba(18,184,134,0);
+  animation: cta-pulse 2.6s ease-in-out infinite;
+}
+@keyframes cta-pulse {
+  0%,100% { box-shadow: 0 0 0 rgba(18,184,134,0); transform: translateY(0) scale(1); }
+  50%     { box-shadow: 0 0 36px rgba(18,184,134,.45); transform: translateY(-1px) scale(1.01); }
+}
+
+/* continuous sheen that runs even on mobile */
+.btn.primary.cta-boost::after {
+  content: "";
+  position: absolute; inset: 0 -140%;
+  background: linear-gradient(110deg, transparent 40%, rgba(255,255,255,.28) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: cta-sheen 3.8s linear infinite;
+  border-radius: inherit;
+}
+@keyframes cta-sheen {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .final-cta.cta-enhanced .cta-backdrop,
+  .final-cta.cta-enhanced::before,
+  .final-cta.cta-enhanced::after,
+  .btn.primary.cta-boost::after { animation: none !important; }
+  .btn.primary.cta-boost { animation: none !important; box-shadow: none; }
+}
+/* =========================
+   Site-wide "vibe" utilities (CTA/Testimonial feel)
+   ========================= */
+
+/* Section wrapper with animated gradient glow */
+.vibe-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.vibe-section .vibe-backdrop {
+  position: absolute; inset: -80px -40px;
+  z-index: -1; pointer-events: none;
+  filter: blur(32px) saturate(115%);
+  opacity: 0.75;
+  background:
+    radial-gradient(750px 240px at 12% 110%, rgba(18,184,134,.35), transparent 70%),
+    radial-gradient(750px 240px at 88% -10%, rgba(108,92,231,.26), transparent 70%),
+    radial-gradient(420px 180px at 52% 40%, rgba(18,184,134,.16), transparent 70%);
+  animation: vibe-pan 26s ease-in-out infinite alternate;
+}
+@keyframes vibe-pan {
+  0%   { transform: translate3d(-10px, 0, 0) scale(1); }
+  100% { transform: translate3d(10px, -6px, 0) scale(1.03); }
+}
+
+/* Card-level glow (no visible border required) */
+.vibe-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+.vibe-card::before {
+  content: "";
+  position: absolute; inset: -1px; border-radius: inherit;
+  background: radial-gradient(600px 120px at 50% 110%, rgba(18,184,134,.35), transparent 70%);
+  filter: blur(10px); opacity: .6; pointer-events: none; z-index: 0;
+}
+/* very subtle rotating conic “energy ring” (kept low) */
+.vibe-card::after {
+  content: "";
+  position: absolute; inset: 0; padding: 1px; border-radius: inherit;
+  background:
+    conic-gradient(from 0deg,
+      rgba(18,184,134,0) 0deg,
+      rgba(18,184,134,.45) 60deg,
+      rgba(18,184,134,0) 120deg,
+      rgba(108,92,231,.35) 180deg,
+      rgba(18,184,134,0) 240deg,
+      rgba(18,184,134,.35) 300deg,
+      rgba(18,184,134,0) 360deg);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: .22; z-index: 1;
+  animation: vibe-ring 30s linear infinite;
+}
+@keyframes vibe-ring { to { transform: rotate(1turn); } }
+
+@media (hover:hover) {
+  .vibe-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 14px 34px rgba(0,0,0,.34); }
+}
+
+/* =========================
+   FAQ — glow + micro-motion (mobile friendly)
+   ========================= */
+.faq-wrap { position: relative; }
+
+.faq-list {
+  display: grid; gap: var(--gap);
+}
+
+.faq-item {
+  overflow: hidden;
+}
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  font-weight: 700;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+
+/* chevron */
+.faq-item summary::after {
+  content: "▾";
+  opacity: .8;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.faq-item[open] summary::after { transform: rotate(-180deg); opacity: 1; }
+
+/* content reveal (fade/slide) */
+.faq-content {
+  padding: 0 1.1rem 1rem;
+  color: var(--muted);
+  animation: faq-reveal .35s ease both;
+}
+@keyframes faq-reveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* elevate when open */
+.faq-item[open] {
+  box-shadow: 0 12px 30px rgba(0,0,0,.26);
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .vibe-section .vibe-backdrop,
+  .vibe-card::after { animation: none !important; }
+}
+/* =====================================================
+   VIBE PROPAGATION — match Testimonials/CTA/FAQ look
+   (no JSX changes needed)
+   ===================================================== */
+
+/* 1) Apply the ambient glow + subtle “energy ring” to existing cards */
+:is(
+  .cred-item,          /* CredBar items */
+  .svc-card,           /* ServicesPreview cards */
+  .process-item,       /* ProcessSnapshot list items, if used */
+  .step-card,          /* Process “steps” cards */
+  .proof-card,         /* Process “proof” cards */
+  .feat-card,          /* FeaturedProject wrapper */
+  .price-card,         /* Pricing cards */
+  .deli-card,          /* Deliverables cards */
+  .idea-card,          /* Ideas cards */
+  .contact-form        /* Contact form block */
+) {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+
+/* Ambient base glow (brand-green) */
+:is(
+  .cred-item,
+  .svc-card,
+  .process-item,
+  .step-card,
+  .proof-card,
+  .feat-card,
+  .price-card,
+  .deli-card,
+  .idea-card,
+  .contact-form
+)::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(600px 120px at 50% 110%, rgba(18,184,134,.35), transparent 70%);
+  filter: blur(10px);
+  opacity: .6;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle rotating “energy ring” (kept low so there’s no obvious border) */
+:is(
+  .cred-item,
+  .svc-card,
+  .process-item,
+  .step-card,
+  .proof-card,
+  .feat-card,
+  .price-card,
+  .deli-card,
+  .idea-card,
+  .contact-form
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background:
+    conic-gradient(from 0deg,
+      rgba(18,184,134,0) 0deg,
+      rgba(18,184,134,.38) 60deg,
+      rgba(18,184,134,0) 120deg,
+      rgba(108,92,231,.28) 180deg,
+      rgba(18,184,134,0) 240deg,
+      rgba(18,184,134,.28) 300deg,
+      rgba(18,184,134,0) 360deg);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: .20;           /* subtle by default */
+  z-index: 1;
+  animation: vibe-ring 30s linear infinite;
+}
+@keyframes vibe-ring { to { transform: rotate(1turn); } }
+
+/* 2) Images: give the hero “break” image & the process hero image a matching glow */
+.break-img,
+.process-hero-img,
+.wireframe-img {
+  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+.break-img::after,
+.process-hero-img::after,
+.wireframe-img::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(650px 140px at 50% 110%, rgba(18,184,134,.35), transparent 70%);
+  filter: blur(10px);
+  opacity: .65;
+  pointer-events: none;
+}
+
+/* If those images are plain <img>, wrap selector to handle pseudo-elements via a helper */
+.image-break .container,
+.wireframe-showcase,
+.container:has(.process-hero-img) {
+  position: relative;
+  isolation: isolate; /* keep glow contained */
+}
+
+/* 3) Ensure section backdrops sit behind */
+.vibe-section { isolation: isolate; }
+.vibe-section .vibe-backdrop { z-index: -1; }
+
+/* Optional: small lift on hover for desktop (keeps mobile unchanged) */
+@media (hover:hover) {
+  :is(
+    .cred-item,
+    .svc-card,
+    .process-item,
+    .step-card,
+    .proof-card,
+    .feat-card,
+    .price-card,
+    .deli-card,
+    .idea-card,
+    .contact-form
+  ):hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 14px 34px rgba(0,0,0,.34);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .cred-item,
+    .svc-card,
+    .process-item,
+    .step-card,
+    .proof-card,
+    .feat-card,
+    .price-card,
+    .deli-card,
+    .idea-card,
+    .contact-form
+  )::after { animation: none !important; }
+}
+/* ===== ABOUT (refined layout + motion + CTA/Testimonial vibe) ===== */
+.about-wrap { position: relative; }
+
+/* --- Scroll reveal --- */
+[data-reveal] { opacity: 0; transform: translateY(14px) scale(.98); }
+[data-reveal].is-in { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s ease; }
+[data-reveal="right"] { transform: translateX(26px); }
+[data-reveal="left"]  { transform: translateX(-26px); }
+[data-reveal="up"]    { transform: translateY(18px); }
+
+/* --- Section shimmer backdrop (matches CTA/Testi vibe) --- */
+.vibe-backdrop--shimmer {
+  animation: vibe-pan 26s ease-in-out infinite alternate;
+  filter: blur(32px) saturate(115%);
+  opacity: .75;
+}
+
+/* --- Top row: copy + image side by side --- */
+.about-hero-grid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 900px) {
+  .about-hero-grid { grid-template-columns: 1.1fr .9fr; }
+}
+
+/* Cards spacing */
+.about-intro,
+.about-visual,
+.about-founder,
+.about-note { position: relative; }
+
+/* Headline treatment */
+.fancy-grad {
+  background: linear-gradient(90deg, var(--brand), #6c5ce7);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.about-title { margin-bottom: .35rem; }
+.about-intro .p.lead { font-size: 1.08rem; }
+.about-intro .p + .p { margin-top: .6rem; }
+
+/* Pier image card */
+.about-visual { overflow: hidden; display: grid; align-content: start; }
+.about-hero-img {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 2px);
+  display: block;
+  clip-path: inset(0 0 100% 0 round 10px);
+  animation: about-curtain .7s ease forwards .1s;
+}
+@keyframes about-curtain { to { clip-path: inset(0 0 0 0 round 10px); } }
+.about-cap { margin-top: .5rem; color: var(--muted); font-size: .92rem; }
+
+/* Ken Burns (slow, subtle) */
+.kenburns { animation: kb 18s ease-in-out infinite alternate; }
+@keyframes kb {
+  0%   { transform: scale(1.02) translate3d(-2%, -1%, 0); }
+  100% { transform: scale(1.07) translate3d(2%, 1%, 0); }
+}
+
+/* Founder grid */
+.about-founder {
+  display: grid; gap: var(--gap); align-items: center;
+  grid-template-columns: 1fr;
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 900px) {
+  .about-founder { grid-template-columns: 280px 1fr; }
+}
+.about-founder-media { position: relative; }
+.about-headshot {
+  width: 100%; max-width: 260px; aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: 16px; display: block; margin: 0 auto;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+/* Floaty headshot */
+.floaty { animation: floaty 6s ease-in-out infinite; }
+@keyframes floaty {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%     { transform: translateY(-6px) scale(1.01); }
+}
+
+/* Under-glow headline */
+.underglow { position: relative; }
+.underglow::after {
+  content:""; position: absolute; left: 0; right: 0; bottom: -6px; height: 6px;
+  border-radius: 999px;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(18,184,134,.6), transparent 70%);
+  filter: blur(6px); opacity: .8;
+}
+
+/* Badges */
+.about-badges { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+.about-badge {
+  display: inline-block; padding: .35rem .6rem; border-radius: .6rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.08));
+  font-size: .9rem;
+}
+
+/* Trust note */
+.about-note { text-align: center; }
+.about-note .p { margin: .5rem auto; max-width: 60ch; }
+
+/* EXTRA: card glow + subtle rotating energy ring (matches Testimonials/CTA) */
+.about-wrap .vibe-card {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 28px rgba(0,0,0,.28);
+}
+.about-wrap .vibe-card::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; z-index: 0; pointer-events: none;
+  background: radial-gradient(600px 120px at 50% 110%, rgba(18,184,134,.32), transparent 70%);
+  filter: blur(10px); opacity: .65;
+}
+.about-wrap .vibe-card::after {
+  content: ""; position: absolute; inset: 0; padding: 1px; border-radius: inherit; z-index: 1; opacity: .18;
+  background:
+    conic-gradient(from 0deg,
+      rgba(18,184,134,0) 0deg,
+      rgba(18,184,134,.45) 60deg,
+      rgba(18,184,134,0) 120deg,
+      rgba(108,92,231,.35) 180deg,
+      rgba(18,184,134,0) 240deg,
+      rgba(18,184,134,.35) 300deg,
+      rgba(18,184,134,0) 360deg);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: about-ring 28s linear infinite;
+}
+@keyframes about-ring { to { transform: rotate(1turn); } }
+
+@media (hover:hover) {
+  .about-wrap .vibe-card:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 14px 34px rgba(0,0,0,.34);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .kenburns, .floaty, .about-wrap .vibe-card::after, .vibe-backdrop--shimmer { animation: none !important; }
 }
