@@ -2,28 +2,25 @@ import { useEffect } from "react";
 import useTitle from "../hooks/useTitle";
 import "../styles/globals.css";
 
-/**
- * ⬇️ Optional images (drop into src/assets/ and uncomment)
- * Keep hero wide (2400×1200+), other images ~1200×800, WebP if possible.
- */
-// import processHero from "../assets/process-hero.webp";     // Abstract/office/desk or calm gradient
-// import discoveryImg from "../assets/process-discovery.webp"; // Notebook, conversation, sticky notes
-// import designImg from "../assets/process-design.webp";       // Wireframes / Figma UI
-// import buildImg from "../assets/process-build.webp";         // Code editor / components
-// import launchImg from "../assets/process-launch.webp";       // Confetti / dashboard / rocket
+/** Optional: swap in your own images later
+// import processHero from "../assets/process-hero.webp";
+// import discoveryImg from "../assets/process-discovery.webp";
+// import designImg from "../assets/process-design.webp";
+// import buildImg from "../assets/process-build.webp";
+// import launchImg from "../assets/process-launch.webp";
+*/
 
 export default function Process() {
   useTitle("Process");
 
   useEffect(() => {
-    // Observe page sections and add 'in' on scroll
     const selectors = [".proc-hero", ".proc-steps", ".proc-proof", ".proc-faq", ".proc-cta"];
     const els = selectors.flatMap((sel) => Array.from(document.querySelectorAll<HTMLElement>(sel)));
     const io = new IntersectionObserver(
-      entries => entries.forEach(e => e.isIntersecting && e.target.classList.add("in")),
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("in")),
       { threshold: 0.16 }
     );
-    els.forEach(el => io.observe(el));
+    els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
 
@@ -34,7 +31,8 @@ export default function Process() {
         className="hero anim-pan-bg proc-hero"
         style={{
           // backgroundImage: `url(${processHero})`,
-          background: "radial-gradient(1000px 600px at 50% 20%, rgba(255,255,255,.06), transparent), linear-gradient(180deg, rgba(18,184,134,.15), rgba(0,0,0,.0))",
+          background:
+            "radial-gradient(900px 560px at 50% 18%, rgba(255,255,255,.06), transparent), linear-gradient(180deg, rgba(108,92,231,.20), rgba(0,0,0,0))",
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
@@ -46,127 +44,173 @@ export default function Process() {
         }}
       >
         <div className="hero-overlay" />
+        {/* ambient orbs */}
+        <div className="proc-orb o1" aria-hidden="true" />
+        <div className="proc-orb o2" aria-hidden="true" />
+        <div className="proc-orb o3" aria-hidden="true" />
+
         <div className="container" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-          <h1 className="h1 proc-hero-title" aria-label="A simple, transparent process">
-            {["A", "simple,", "transparent", "process"].map((w, i) => (
-              <span className="chunk" style={{ ["--i" as any]: i }} key={w + i}>{w}</span>
+          <h1 className="h1 proc-hero-title" aria-label="A simple process you’ll actually enjoy">
+            {["A", "simple", "process", "you’ll", "actually", "enjoy"].map((w, i) => (
+              <span className="chunk" style={{ ["--i" as any]: i }} key={w + i}>
+                {w}
+              </span>
             ))}
           </h1>
           <div className="underline-wipe" aria-hidden="true" />
-          <p className="p proc-hero-sub" style={{ margin: "0 auto 1.25rem", maxWidth: 700 }}>
-            Discovery → Design → Build → Launch & Care. Clear steps, clear timelines, clear outcomes.
+          <p className="p proc-hero-sub" style={{ margin: "0 auto 1.25rem", maxWidth: 720 }}>
+            Clear steps. No jargon. We’ll go from idea → live website—together.
           </p>
-        </div>
-      </section>
-
-      {/* ===== STEPS (4 cards) ===== */}
-      <section className="section">
-        <div className="container">
-          <h2 className="h2">How we’ll work together</h2>
-
-          <div className="grid grid-2 proc-steps" style={{ marginTop: "1rem" }}>
-            {/* 1 — Discovery */}
-            <article className="card pad step-card flip" style={{ ["--i" as any]: 0 }}>
-              {/* <img src={discoveryImg} alt="Discovery notes" className="step-img" /> */}
-              <div className="step-head">
-                <div className="step-num">1</div>
-                <h3 style={{ margin: 0 }}>Discovery</h3>
-              </div>
-              <p className="p" style={{ marginTop: ".35rem" }}>
-                Short call to understand goals, audience, and the actions we want visitors to take.
-                I’ll review your current site and competitors to find quick wins.
-              </p>
-              <ul className="p" style={{ marginTop: ".5rem" }}>
-                <li>• Goals, pages, features</li>
-                <li>• Content & brand assets</li>
-                <li>• Timeline & scope</li>
-              </ul>
-              {/* Image suggestion: a notebook/coffee shot, or a subtle meeting photo */}
-            </article>
-
-            {/* 2 — Design */}
-            <article className="card pad step-card left" style={{ ["--i" as any]: 1 }}>
-              {/* <img src={designImg} alt="Wireframes / mockups" className="step-img" /> */}
-              <div className="step-head">
-                <div className="step-num">2</div>
-                <h3 style={{ margin: 0 }}>Design</h3>
-              </div>
-              <p className="p" style={{ marginTop: ".35rem" }}>
-                Wireframes → clean visual design. Mobile-first, with clear hierarchy and strong CTAs.
-                You’ll review a live prototype and give feedback.
-              </p>
-              <ul className="p" style={{ marginTop: ".5rem" }}>
-                <li>• Wireframes for key screens</li>
-                <li>• High-fidelity mockups</li>
-                <li>• Feedback & iterations</li>
-              </ul>
-              {/* Image suggestion: Figma screens/wireframes grid */}
-            </article>
-
-            {/* 3 — Build */}
-            <article className="card pad step-card right" style={{ ["--i" as any]: 2 }}>
-              {/* <img src={buildImg} alt="Code editor" className="step-img" /> */}
-              <div className="step-head">
-                <div className="step-num">3</div>
-                <h3 style={{ margin: 0 }}>Build</h3>
-              </div>
-              <p className="p" style={{ marginTop: ".35rem" }}>
-                Components, animations, forms, and speed. I build it accessible and SEO-ready,
-                with a staging link so you can see progress live.
-              </p>
-              <ul className="p" style={{ marginTop: ".5rem" }}>
-                <li>• Clean, maintainable code</li>
-                <li>• Performance + accessibility checks</li>
-                <li>• On-page SEO foundations</li>
-              </ul>
-              {/* Image suggestion: editor screenshot or code with dark theme */}
-            </article>
-
-            {/* 4 — Launch & Care */}
-            <article className="card pad step-card pop" style={{ ["--i" as any]: 3 }}>
-              {/* <img src={launchImg} alt="Launch dashboard" className="step-img" /> */}
-              <div className="step-head">
-                <div className="step-num">4</div>
-                <h3 style={{ margin: 0 }}>Launch & Care</h3>
-              </div>
-              <p className="p" style={{ marginTop: ".35rem" }}>
-                Go live with SSL, analytics, and backups. After launch, I can host and maintain the site,
-                make updates, and keep it fast and secure.
-              </p>
-              <ul className="p" style={{ marginTop: ".5rem" }}>
-                <li>• DNS, SSL, CDN</li>
-                <li>• Backups & uptime monitoring</li>
-                <li>• Analytics dashboard</li>
-              </ul>
-              {/* Image suggestion: simple success/celebration or dashboard tiles */}
-            </article>
+          <div style={{ display: "flex", gap: ".75rem", flexWrap: "wrap", justifyContent: "center" }}>
+            <a className="btn primary sheen" href="/contact">Book the intro call</a>
+            <a className="btn ghost sheen" href="/work">See recent work</a>
           </div>
         </div>
       </section>
 
-      {/* ===== PROOF (before/after, speed, mobile) ===== */}
+      {/* ===== STEPS (clean + ambient timeline) ===== */}
+      <section className="section">
+        <div className="container">
+          <h2 className="h2">How we’ll work together</h2>
+
+          <div className="proc-stage">
+            <div className="proc-timeline" aria-hidden="true" />
+            <ol className="proc-steps compact" style={{ marginTop: "1rem" }}>
+              {/* 1 — Discovery */}
+              <li className="card pad step-card flip">
+                <header className="step-header simple">
+                  <div className="step-icon" data-bob aria-hidden="true">🧭</div>
+                  <h3 className="step-title">Discovery</h3>
+                </header>
+
+                <p className="p step-oneLiner">
+                  A short conversation to get clear on goals, pages, and what “success” looks like.
+                </p>
+
+                <ul className="emolist tight">
+                  <li>🎯 Goals + must-haves</li>
+                  <li>🗺️ Page list & priorities</li>
+                </ul>
+
+                <details className="step-more">
+                  <summary>More details</summary>
+                  <ul className="emolist">
+                    <li>🔍 Review current site & a few competitors</li>
+                    <li>📝 Simple written plan after the call</li>
+                  </ul>
+                </details>
+
+                {/* <img src={discoveryImg} alt="Discovery notes" className="step-img" /> */}
+              </li>
+
+              {/* 2 — Design */}
+              <li className="card pad step-card left">
+                <header className="step-header simple">
+                  <div className="step-icon" data-bob aria-hidden="true">✏️</div>
+                  <h3 className="step-title">Design</h3>
+                </header>
+
+                <p className="p step-oneLiner">
+                  Wireframes → clean visuals you can click through on your phone.
+                </p>
+
+                <ul className="emolist tight">
+                  <li>🧱 Wireframes for key pages</li>
+                  <li>🎨 Polished look & layout</li>
+                </ul>
+
+                <details className="step-more">
+                  <summary>More details</summary>
+                  <ul className="emolist">
+                    <li>💬 Comment right on the prototype</li>
+                    <li>🔁 One quick round of revisions</li>
+                  </ul>
+                </details>
+
+                {/* <img src={designImg} alt="Wireframes / mockups" className="step-img" /> */}
+              </li>
+
+              {/* 3 — Build */}
+              <li className="card pad step-card right">
+                <header className="step-header simple">
+                  <div className="step-icon" data-bob aria-hidden="true">🧰</div>
+                  <h3 className="step-title">Build</h3>
+                </header>
+
+                <p className="p step-oneLiner">
+                  I turn the design into a fast, phone-friendly site with clear buttons.
+                </p>
+
+                <ul className="emolist tight">
+                  <li>⚡ Speed & accessibility</li>
+                  <li>📮 Forms, maps, tracking</li>
+                </ul>
+
+                <details className="step-more">
+                  <summary>More details</summary>
+                  <ul className="emolist">
+                    <li>🔎 Set up so people can find you on Google</li>
+                    <li>🔗 Private link so you can watch progress</li>
+                  </ul>
+                </details>
+
+                {/* <img src={buildImg} alt="Code editor" className="step-img" /> */}
+              </li>
+
+              {/* 4 — Launch & Care */}
+              <li className="card pad step-card pop">
+                <header className="step-header simple">
+                  <div className="step-icon" data-bob aria-hidden="true">🚀</div>
+                  <h3 className="step-title">Launch & Care</h3>
+                </header>
+
+                <p className="p step-oneLiner">
+                  Go live with the lock icon, analytics, and backups—then keep things running smoothly.
+                </p>
+
+                <ul className="emolist tight">
+                  <li>🔒 Secure connection</li>
+                  <li>📈 Basic analytics & backups</li>
+                </ul>
+
+                <details className="step-more">
+                  <summary>More details</summary>
+                  <ul className="emolist">
+                    <li>🧯 Quick fixes & content edits</li>
+                    <li>🤝 Optional Hosting & Care plan</li>
+                  </ul>
+                </details>
+
+                {/* <img src={launchImg} alt="Launch dashboard" className="step-img" /> */}
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== PROOF ===== */}
       <section className="section">
         <div className="container">
           <h2 className="h2">Proof, not promises</h2>
-          <p className="p">Add visuals that back it up—swap these with your real results.</p>
+          <p className="p">Swap these with your real results when you have them.</p>
 
           <div className="grid grid-3 proc-proof" style={{ marginTop: "1rem" }}>
             <div className="card pad proof-card curtain" style={{ ["--i" as any]: 0 }}>
               <strong>Before → After</strong>
               <p className="p" style={{ marginTop: ".35rem" }}>
-                Side-by-side homepage screenshots, same crop. Show clarity + speed improvements.
+                Old vs. new homepage (same crop). Cleaner design + faster load.
               </p>
             </div>
             <div className="card pad proof-card curtain" style={{ ["--i" as any]: 1 }}>
-              <strong>Speed & Accessibility</strong>
+              <strong>Faster & easier</strong>
               <p className="p" style={{ marginTop: ".35rem" }}>
-                Lighthouse/Pagespeed scores and Core Web Vitals badges, with dates.
+                Performance scores + “findability” checks with dates.
               </p>
             </div>
             <div className="card pad proof-card curtain" style={{ ["--i" as any]: 2 }}>
-              <strong>Mobile First</strong>
+              <strong>Mobile-first view</strong>
               <p className="p" style={{ marginTop: ".35rem" }}>
-                Phone mockup showing legible text, big CTA button, and sticky call bar.
+                Phone mock: legible text, big button, sticky call bar.
               </p>
             </div>
           </div>
