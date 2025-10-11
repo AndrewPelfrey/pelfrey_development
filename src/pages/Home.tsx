@@ -124,7 +124,7 @@ export default function Home() {
   <div className="hero-overlay" />
 
   {/* rotating badge (plain language) */}
-  <div className="rotating-badge" aria-hidden="true">
+  {/* <div className="rotating-badge" aria-hidden="true">
     <svg viewBox="0 0 200 200">
       <defs>
         <path id="circlePath" d="M 100,100 m -70,0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" />
@@ -135,7 +135,7 @@ export default function Home() {
         </textPath>
       </text>
     </svg>
-  </div>
+  </div> */}
 
   <div className="container hero-inner">
     {/* marquee (kept) */}
@@ -160,7 +160,7 @@ export default function Home() {
 
     <p className="p hero-sub">
       Custom websites that look great, load fast, and help customers find you.
-      We keep everything running—hosting, updates, and friendly support.
+      {/* We keep everything running—hosting, updates, and friendly support. */}
     </p>
 
     <div className="hero-cta" style={{ justifyContent: "center" }}>
@@ -180,7 +180,7 @@ export default function Home() {
 
       <section className="vibe-section">
   <div className="vibe-backdrop" aria-hidden="true" />
-  <CredBar />
+  {/* <CredBar /> */}
 </section>
         <AboutPreview />
 

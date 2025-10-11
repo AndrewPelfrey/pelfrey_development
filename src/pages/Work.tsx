@@ -1,29 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import useTitle from "../hooks/useTitle";
 import "../styles/globals.css";
-import alloutdoor from "../assets/all-outdoor.jpeg";
 
-/**
- * Add screenshots when you have them:
- * import shotHome from "../assets/alloutdoors-home.webp";
- * import shotMobile from "../assets/alloutdoors-mobile.webp";
- * import shotService from "../assets/alloutdoors-services.webp";
- * import shotContact from "../assets/alloutdoors-contact.webp";
- *
- * Optional before/after:
- * import beforeHome from "../assets/alloutdoors-before.webp";
- */
+import workhero from "../assets/work-hero.gif";
 
-// Basic project info (easy to tweak later)
+import homepageRecording from "../assets/homepage-recording.mov";
+import servicesRecording from "../assets/services-recording.mov";
+import contactRecording from "../assets/contact-recording.mov";
+import mobileRecording from "../assets/mobile-recording.mov";
+
 const project = {
   name: "All Outdoors",
   site: "https://alloutdoors.netlify.app",
-  tagline: "A modern, phone-friendly site that makes it easy to call, book, and browse services.",
+  tagline:
+    "A modern, phone-friendly site that makes it easy to call, book, and browse services.",
 };
 
 export default function Work() {
   useTitle("Work");
 
+  const heroRef = useRef(null);
+
+  // Trigger hero text entrance on first paint
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      heroRef.current?.classList.add("play");
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Intersection Observer to trigger `.in` on sections/cards
   useEffect(() => {
     const selectors = [
       ".work-hero",
@@ -32,13 +38,17 @@ export default function Work() {
       ".feat-before",
       ".feat-what",
       ".feat-metrics",
+      ".stat-grid",
       ".feat-stack",
       ".feat-quote",
       ".feat-cta",
     ];
-    const els = selectors.flatMap((sel) => Array.from(document.querySelectorAll<HTMLElement>(sel)));
+    const els = selectors.flatMap((sel) =>
+      Array.from(document.querySelectorAll(sel))
+    );
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("in")),
+      (entries) =>
+        entries.forEach((e) => e.isIntersecting && e.target.classList.add("in")),
       { threshold: 0.16 }
     );
     els.forEach((el) => io.observe(el));
@@ -47,114 +57,110 @@ export default function Work() {
 
   return (
     <main>
-      {/* ===== Featured Project: HERO ===== */}
-      <section
-        className="hero work-hero anim-pan-bg"
-        style={{
-          /* Use your image as the hero background, with a soft dark gradient for readability */
-          backgroundImage: `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url(${alloutdoor})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          color: "white",
-          minHeight: "54vh",
-          display: "flex",
-          alignItems: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div className="hero-overlay" />
-        {/* floating orbs */}
-        <div className="work-orb w1" aria-hidden="true" />
-        <div className="work-orb w2" aria-hidden="true" />
-        <div className="work-orb w3" aria-hidden="true" />
+      {/* ===== Featured Project: HERO (image over animated gradient) ===== */}
+      <section ref={heroRef} className="hero work-hero hero-dark hero-boosted">
+        {/* Background image layer sits above the animated gradient, below content */}
+        <div
+          className="hero-bg"
+          style={{
+            backgroundImage: `url(${workhero})`,
+          }}
+          aria-hidden="true"
+        />
 
-        <div className="container" style={{ position: "relative", zIndex: 1 }}>
+        <div className="container hero-content">
           <div className="feat-grid">
-            <div className="feat-intro card pad">
-              <h1 className="h1" style={{ marginBottom: ".25rem" }}>
-                Featured Project: {project.name}
+            <div className="hero-copy">
+              <h1 className="h1 hero-title">
+                <span className="hero-kicker">Featured Project</span>
+                <span className="hero-name">All Outdoors</span>
               </h1>
-              <p className="p" style={{ margin: 0 }}>{project.tagline}</p>
+              <p className="p hero-sub">{project.tagline}</p>
 
-              {/* quick benefit chips */}
-              <div className="chip-row" style={{ marginTop: ".75rem" }}>
-                {[
-                  { e: "📱", t: "Great on phones" },
-                  { e: "⚡", t: "Loads fast" },
-                  { e: "🧭", t: "Clear navigation" },
-                  { e: "📞", t: "Click-to-call & forms" },
-                ].map(({ e, t }, i) => (
-                  <div className="chip" style={{ ["--i" as any]: i }} key={t}>
-                    <span className="chip-emoji" aria-hidden="true">{e}</span>
-                    <span className="chip-text">{t}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap", marginTop: ".9rem" }}>
-                <a className="btn primary sheen" href={project.site} target="_blank" rel="noreferrer">
-                  View live site
+              <div className="hero-cta-row">
+                <a
+                  className="btn primary sheen"
+                  href={project.site}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View Live Site
                 </a>
                 <a className="btn ghost sheen" href="/contact">
-                  Start your project
+                  Start Your Project
                 </a>
               </div>
             </div>
-
-            {/* hero meta card */}
-            <aside className="feat-meta card pad">
-              <strong style={{ display: "block", marginBottom: ".35rem" }}>At a glance</strong>
-              <ul className="emolist">
-                <li>🎯 Clear homepage sections with obvious next steps</li>
-                <li>🧰 Service pages structured for easy skimming</li>
-                <li>📍 Contact details and map made obvious</li>
-                <li>🔒 Secure, modern build with best practices</li>
-              </ul>
-            </aside>
           </div>
         </div>
       </section>
 
-      {/* ===== Gallery (swap images when ready) ===== */}
+      {/* ===== Gallery ===== */}
       <section className="section">
         <div className="container">
           <h2 className="h2">Screenshots</h2>
-          <p className="p">A few views from the site. Replace these placeholders with your own screenshots.</p>
 
           <div className="grid grid-4 feat-gallery" style={{ marginTop: "1rem" }}>
             {[
-              { alt: "Homepage hero", src: "", label: "Homepage" },
-              { alt: "Services overview", src: "", label: "Services" },
-              { alt: "Mobile menu & CTAs", src: "", label: "Mobile view" },
-              { alt: "Contact form or info", src: "", label: "Contact" },
-            ].map((img, i) => (
-              <figure className="img-tile" style={{ ["--i" as any]: i }} key={img.label}>
-                {/* Replace with <img src={shotX} alt={img.alt} /> */}
-                <div className="img-ph" aria-label={img.alt} />
-                <figcaption><strong>{img.label}</strong></figcaption>
+              {
+                alt: "Homepage hero",
+                src: homepageRecording,
+                type: "video",
+                label: "Homepage",
+              },
+              {
+                alt: "Services overview",
+                src: servicesRecording,
+                type: "video",
+                label: "Services",
+              },
+              {
+                alt: "Mobile menu & CTAs",
+                src: mobileRecording,
+                type: "video",
+                label: "Mobile view",
+                fit: "contain",
+              },
+              {
+                alt: "Contact form or info",
+                src: contactRecording,
+                type: "video",
+                label: "Contact",
+              },
+            ].map((item, i) => (
+              <figure className="img-tile" style={{ ["--i"]: i }} key={item.label}>
+                {item.type === "video" && item.src ? (
+                  <video
+                    src={item.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    aria-label={item.alt}
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      borderRadius: "12px",
+                      objectFit: item.fit || "cover",
+                      aspectRatio: "16 / 9",
+                      backgroundColor: "#000",
+                    }}
+                  />
+                ) : item.src ? (
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    style={{ width: "100%", borderRadius: "12px" }}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="img-ph" aria-label={item.alt} />
+                )}
+                <figcaption>
+                  <strong>{item.label}</strong>
+                </figcaption>
               </figure>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Before / After (optional) ===== */}
-      <section className="section">
-        <div className="container feat-before">
-          <h2 className="h2"> After</h2>
-          {/* <p className="p">Show the transformation. If there’s no “before,” just keep the “after.”</p> */}
-
-          <div className="ba-wrap">
-            {/* Replace with real images when available */}
-            {/* <div className="ba-tile">
-              <div className="img-ph" aria-label="Before" />
-              <div className="ba-tag">Before</div>
-            </div> */}
-            <div className="ba-tile">
-              <div className="img-ph" aria-label="After" />
-              <div className="ba-tag after">After</div>
-            </div>
           </div>
         </div>
       </section>
@@ -192,29 +198,48 @@ export default function Work() {
         </div>
       </section>
 
-      {/* ===== Results (placeholders you can update) ===== */}
+      {/* ===== Results / Pre-launch expectations ===== */}
       <section className="section">
         <div className="container feat-metrics">
-          <h2 className="h2">Results (early indicators)</h2>
-          <div className="grid grid-3 stat-grid">
+          <div style={{ display: "flex", alignItems: "baseline", gap: ".5rem" }}>
+            <h2 className="h2" style={{ margin: 0 }}>Pre-launch expectations</h2>
+            <span className="chip small">Pre-launch</span>
+          </div>
+
+          <p className="p" style={{ marginTop: ".35rem" }}>
+            The new site is designed to bring in more local customers and turn visits
+            into real leads. Here’s what we expect once it goes live:
+          </p>
+
+          <div className="grid grid-3 stat-grid" style={{ marginTop: ".75rem" }}>
             {[
-              { n: "↑", label: "More calls from mobile" },
-              { n: "↓", label: "Faster load → lower bounce" },
-              { n: "✓", label: "Clearer path to services" },
+              {
+                n: "👀",
+                label: "More visibility online",
+                help: "Modern design and clear keywords help it show up more in local searches.",
+              },
+              {
+                n: "📞",
+                label: "More calls and inquiries",
+                help: "Click-to-call and simple forms make it easy to contact right away.",
+              },
+              {
+                n: "🤝",
+                label: "Higher trust and conversions",
+                help: "Professional visuals and clear services build confidence.",
+              },
             ].map((s, i) => (
-              <div className="card pad stat" style={{ ["--i" as any]: i }} key={s.label}>
-                <div className="stat-n">{s.n}</div>
-                <div className="stat-l">{s.label}</div>
+              <div className="card pad stat" style={{ ["--i"]: i }} key={s.label}>
+                <div className="stat-n" aria-hidden="true">{s.n}</div>
+                <div className="stat-l" style={{ fontWeight: 700 }}>{s.label}</div>
+                <p className="p" style={{ marginTop: ".35rem" }}>{s.help}</p>
               </div>
             ))}
           </div>
-          {/* <p className="p" style={{ marginTop: ".75rem" }}>
-            * Replace with real numbers when you have a few weeks of data (calls, form submissions, speed scores).
-          </p> */}
         </div>
       </section>
 
-      {/* ===== Stack (keep human-friendly) ===== */}
+      {/* ===== Stack ===== */}
       <section className="section">
         <div className="container feat-stack">
           <h2 className="h2">How it’s built</h2>
@@ -225,7 +250,7 @@ export default function Work() {
               { e: "🔒", t: "Secure by default" },
               { e: "📈", t: "Analytics ready" },
             ].map((x, i) => (
-              <div className="stack-pill" style={{ ["--i" as any]: i }} key={x.t}>
+              <div className="stack-pill" style={{ ["--i"]: i }} key={x.t}>
                 <span aria-hidden="true">{x.e}</span> {x.t}
               </div>
             ))}
@@ -233,7 +258,7 @@ export default function Work() {
         </div>
       </section>
 
-      {/* ===== Testimonial (optional) ===== */}
+      {/* ===== Testimonial ===== */}
       <section className="section">
         <div className="container feat-quote card pad">
           <blockquote>
@@ -253,8 +278,16 @@ export default function Work() {
             I’ll review your situation and share a simple plan—no pressure.
           </p>
           <div style={{ marginTop: "1rem" }}>
-            <a className="btn primary sheen" href="/contact">Get a Free Website Checkup</a>
-            <a className="btn ghost sheen" href={project.site} target="_blank" rel="noreferrer" style={{ marginLeft: ".5rem" }}>
+            <a className="btn primary sheen" href="/contact">
+              Get a Free Website Checkup
+            </a>
+            <a
+              className="btn ghost sheen"
+              href={project.site}
+              target="_blank"
+              rel="noreferrer"
+              style={{ marginLeft: ".5rem" }}
+            >
               See this project live
             </a>
           </div>
